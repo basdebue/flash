@@ -1,0 +1,36 @@
+#!/bin/sh
+#
+# flash - minimalistic flashcards for the terminal
+
+# Parse command-line arguments. See also: `man getopts`.
+while getopts hr opt; do
+    case "$opt" in
+        h)
+            man 1 flash
+            exit;;
+        r)
+            reverse=1;;
+        ?)
+            # Print help instructions to standard error and exit with code 2.
+            printf "Try 'man flash' for more information.\n" >&2
+            exit 2;;
+    esac
+done
+
+# Read a line of input and split it on `FLASH_DELIMITER`, defaulting to `:`.
+while IFS=${FLASH_DELIMITER:-':'} read q a; do
+    # Remove leading whitespace.
+    q="${q#${q%%[![:space:]]*}}"
+    a="${a#${a%%[![:space:]]*}}"
+
+    # Ignore blank lines.
+    [ -z "$q" ] && [ -z "$a" ] && continue
+
+    # Reverse the question order if the corresponding flag is set.
+    [ "$reverse" = 1 ] && tmp=$q && q=$a && a=$tmp
+
+    # Print the question, wait for user input, then print the answer.
+    printf '%s\n' "$q"
+    read -n 1 -s < /dev/tty
+    printf '%s\n\n' "$a"
+done
