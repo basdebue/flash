@@ -1,6 +1,6 @@
 # flash
 
-**`flash`** is a minimalistic flashcard application for the terminal written in portable, POSIX-compliant sh. It doesn't have a lot of features other than being tiny, well-documented and extremely minimalistic.
+**`flash`** is a minimalistic flashcard application for the terminal written in portable, POSIX-compliant sh[*](#known-quirks). It doesn't have a lot of features other than being tiny, well-documented and extremely minimalistic.
 
 If you're on the hunt for a full-featured software solution with answer verification and spaced repetition, you should probably look elsewhere, but people in search of a simple flashcard application for their terminal-based workflow will feel right at home!
 
@@ -35,6 +35,10 @@ $ shuf -n 10 example.txt | flash
 ```
 
 For any further info, refer to the manual page or the [source code](./flash) itself!
+
+## Known quirks
+
+`flash` makes use of exactly two non-POSIX features by calling `read -sn` when awaiting user input. If either of these options is not supported by your shell, `flash` will gracefully downgrade to a standard `read` invocation, in which case you will have to specifically enter a newline in order to advance to the next card.
 
 ## License
 

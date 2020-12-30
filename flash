@@ -29,8 +29,16 @@ while IFS=${FLASH_DELIMITER:-':'} read q a; do
     # Reverse the question order if the corresponding flag is set.
     [ "$reverse" = 1 ] && tmp=$q && q=$a && a=$tmp
 
-    # Print the question, wait for user input, then print the answer.
-    printf '%s\n' "$q"
-    read -n 1 -s < /dev/tty
-    printf '%s\n\n' "$a"
+    # Print the question.
+    printf '%s' "$q"
+
+    # Wait for user input, then print the answer. This initially attempts to
+    # use non-POSIX features to improve ergonomics, but gracefully falls back
+    # to POSIX compatibility mode on failure.
+    if read -rsn 1 < /dev/tty 2> /dev/null; then
+        printf '\n%s\n\n' "$a"
+    else
+        read -r _ < /dev/tty
+        printf '%s\n\n' "$a"
+    fi
 done
